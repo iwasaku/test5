@@ -270,7 +270,7 @@ function setTweetButton() {
     clearTweetButton(); //既存のボタン消す
     // オプションは公式よんで。
     twttr.widgets.createShareButton(
-        "https://foobar.com",   // url
+        "https://iwasaku.github.io/test5/UDN/index.html",   // url
         document.getElementById("tweet-area"),
         {
             size: "small", //ボタンサイズ
