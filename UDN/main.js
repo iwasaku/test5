@@ -1,4 +1,5 @@
 console.log = function () { };  // ログを出す時にはコメントアウトする
+const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
 // viewportの設定
 {
     let vpW = 480;
@@ -13,7 +14,6 @@ console.log = function () { };  // ログを出す時にはコメントアウト
     } else {
         scrnS = scrnH / vpH;
     }
-
     document.getElementsByName('viewport')[0].setAttribute('content', 'width=' + vpW + ',initial-scale=' + scrnS + ',user-scalable=0');
 }
 const SCRN_WIDTH = 13;// スクリーン幅（キャラ数）
@@ -47,12 +47,46 @@ const initpat =
     "2P2D2D2D2D2D2D2D2D2D2D2D2G" +
     "2C2C2C2C2C2C2C2C2C2C2C2C2C";
 function init0() {
+    if (isIOS) {
+        if (navigator.standalone) {
+            console.log("standalone");
+        } else {
+            console.log("browser");
+
+            var passiveSupported = false;
+            try {
+                document.addEventListener("test", null, Object.defineProperty({}, "passive", {
+                    get: function () {
+                        passiveSupported = true;
+                    }
+                }));
+            } catch (err) { }
+            document.documentElement.addEventListener('touchstart', function (event) {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            }, passiveSupported ? { passive: false } : false);
+
+            var lastTouchEnd = 0;
+            document.documentElement.addEventListener('touchend', function (event) {
+                var now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, passiveSupported ? { passive: false } : false);
+        }
+    } else {
+        console.log("other");
+    }
+
+    document.getElementById("start").style.display = "block";
+    document.getElementById("main").style.display = "none";
     for (let ii = 0; ii < SCRN_WIDTH * (SCRN_HEIGHT + 1); ii++) {
         let H = initpat.charAt(ii * 2);
         let L = initpat.charAt(ii * 2 + 1);
         document.images[ii].src = "./resource/" + H + L + ".png";
     }
-    start();
 }
 
 // ページ読み込み完了時の画面構築
@@ -81,7 +115,6 @@ function start() {
     houseCtrlCounter = 0;
     for (let ii = 0; ii < 11; ii++) {
         qYpos[ii] = 0;
-        qYdly[ii] = Math.floor(Math.random() * 120);
         qYdly[ii] = 0;
         qYcnt[ii] = qYdly[ii];
     }
@@ -99,6 +132,8 @@ function start() {
 
     tID = setTimeout('main()', 16);
     flag = true;
+    document.getElementById("start").style.display = "none";
+    document.getElementById("main").style.display = "block";
 }
 
 // 胡瓜移動
