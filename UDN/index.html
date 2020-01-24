@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-148521123-1"></script>
+    -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-148521123-1');
+    </script>
+
+    <link rel="icon" href="./favicon/favicon.ico">
+    <link rel="icon" type="image/png" href="./favicon/favicon-16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="./favicon/favicon-32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="./favicon/favicon-192.png" sizes="192x192">
+    <link rel="apple-touch-icon" href="./favicon/favicon-152.png" sizes="152x152">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@iwasaku">
+    <meta property="og:url" content="https://iwasaku.github.io/test5/UDN/index.html">
+    <meta property="og:title" content="TON TON">
+    <meta property="og:description" content="うどんを食べに行きます">
+    <meta property="og:image" content="https://iwasaku.github.io/test5/UDN/favicon/favicon-192.png">
+
+    <meta charset="UTF-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>UDN</title>
+    <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+    <style>
+        body {
+            color: #ffffff;
+            background-color: #000000;
+
+            font-family: 'Press Start 2P';
+        }
+
+        a img {
+            border: none;
+        }
+    </style>
+    <script>
+        // viewportの設定
+        {
+            let vpW = 480;
+            let vpH = 320;
+            let scrnH = screen.height;
+            let scrnW = screen.width;
+            let scrnS = 1.0;
+
+            let aspectW = scrnW / scrnH;
+            if (aspectW < 1.5) {
+                scrnS = scrnW / vpW;
+            } else {
+                scrnS = scrnH / vpH;
+            }
+            document.getElementsByName('viewport')[0].setAttribute('content', 'width=' + vpW + ',initial-scale=' + scrnS + ',user-scalable=0');
+        }
+    </script>
+</head>
+
+<body>
+    <div style="text-align: center;white-space: nowrap;">
+        <div
+            style="position: absolute;top: 50%;left: 50%;-webkit-transform: translate(-50%,-50%);transform: translate(-50%,-50%);text-align: center;">
+            UDN
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <a id="start-button" href="main.html"><img src="./resource/START.png" width="160" height="32"></a>
+        </div>
+    </div>
+</body>
+
+</html>
