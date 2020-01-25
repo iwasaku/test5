@@ -1,21 +1,7 @@
 console.log = function () { };  // ログを出す時にはコメントアウトする
 const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
-// viewportの設定
-{
-    let vpW = 480;
-    let vpH = 320;
-    let scrnH = screen.height;
-    let scrnW = screen.width;
-    let scrnS = 1.0;
-
-    let aspectW = scrnW / scrnH;
-    if (aspectW < 1.5) {
-        scrnS = scrnW / vpW;
-    } else {
-        scrnS = scrnH / vpH;
-    }
-    document.getElementsByName('viewport')[0].setAttribute('content', 'width=' + vpW + ',initial-scale=' + scrnS + ',user-scalable=0');
-}
+let scrnScale = 1.0;
+setViewport();
 const SCRN_WIDTH = 13;// スクリーン幅（キャラ数）
 const SCRN_HEIGHT = 6;// スクリーン高さ（キャラ数）
 const SCRN_BOTTOM = SCRN_WIDTH * (SCRN_HEIGHT - 1);// スクリーン下左端
@@ -35,8 +21,24 @@ let udnCount = 0; // うどん獲得回数
 let score = 0; // スコア
 let myXpos = 0;  // 自キャラX座標
 let flag = false;   // ゲームの実行フラグ
-var tID;
+let tID = setTimeout('main()', 16);;
 
+function setViewport() {
+    let vpW = 480;
+    let vpH = 320;
+    let scrnH = screen.height;
+    let scrnW = screen.width;
+    let oldScale = scrnScale;
+    let aspectW = scrnW / scrnH;
+    if (aspectW < 1.5) {
+        scrnScale = scrnW / vpW;
+    } else {
+        scrnScale = scrnH / vpH;
+    }
+    if (oldScale != scrnScale) {
+        document.getElementsByName('viewport')[0].setAttribute('content', 'width=' + vpW + ',initial-scale=' + scrnScale + ',user-scalable=0');
+    }
+}
 // ページ読み込み完了時の画面構築
 const initpat =
     "2D2D2D2D2D2D2D2D2D2D2D2D2D" +
@@ -130,7 +132,6 @@ function start() {
     document.images[SCRN_WIDTH * 8 - 2].src = "./resource/2F.png";
     clearTweetButton();
 
-    tID = setTimeout('main()', 16);
     flag = true;
     document.getElementById("start").style.display = "none";
     document.getElementById("main").style.display = "block";
@@ -195,20 +196,20 @@ function checkShopStatus() {
 
 // メイン
 function main() {
-    if (flag === false) {
-        return;
-    }
-    checkStartStatus();
-    checkShopStatus();
-    qMoves();
-    checkColi();
-    // スコアを表示
-    {
-        let scStr = score.toString(10);
-        let scStrLen = scStr.length;
-        for (let idx = 0; idx < scStrLen; idx++) {
-            let tmp = scStr.substring(idx, idx + 1);
-            document.images[SCRN_WIDTH * 0 + (8 + (5 - scStrLen) + idx)].src = "./resource/0" + tmp + ".png";
+    setViewport();
+    if (flag != false) {
+        checkStartStatus();
+        checkShopStatus();
+        qMoves();
+        checkColi();
+        // スコアを表示
+        {
+            let scStr = score.toString(10);
+            let scStrLen = scStr.length;
+            for (let idx = 0; idx < scStrLen; idx++) {
+                let tmp = scStr.substring(idx, idx + 1);
+                document.images[SCRN_WIDTH * 0 + (8 + (5 - scStrLen) + idx)].src = "./resource/0" + tmp + ".png";
+            }
         }
     }
     tID = setTimeout('main()', 16);
