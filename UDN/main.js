@@ -1,4 +1,4 @@
-console.log = function () { };  // ログを出す時にはコメントアウトする
+//console.log = function () { };  // ログを出す時にはコメントアウトする
 const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
 let scrnScale = 1.0;
 setViewport();
@@ -36,6 +36,7 @@ function setViewport() {
         scrnScale = scrnH / vpH;
     }
     if (oldScale != scrnScale) {
+        console.log("scrnH=" + scrnH + ", scrnW=" + scrnW + ", scrnScale" + scrnScale);
         document.getElementsByName('viewport')[0].setAttribute('content', 'width=' + vpW + ',initial-scale=' + scrnScale + ',user-scalable=0');
     }
 }
