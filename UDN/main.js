@@ -24,20 +24,20 @@ let flag = false;   // ゲームの実行フラグ
 let tID = setTimeout('main()', 16);;
 
 function setViewport() {
-    let vpW = 480;
-    let vpH = 320;
+    const vpW = 32 * 13//32*13
+    const vpH = 32 * 9;//32*9
     let scrnH = screen.height;
     let scrnW = screen.width;
     let oldScale = scrnScale;
     let aspectW = scrnW / scrnH;
-    if (aspectW < 1.5) {
+    if (aspectW < vpW / vpH) {
         scrnScale = scrnW / vpW;
     } else {
         scrnScale = scrnH / vpH;
     }
     if (oldScale != scrnScale) {
         console.log("scrnH=" + scrnH + ", scrnW=" + scrnW + ", scrnScale" + scrnScale);
-        document.getElementsByName('viewport')[0].setAttribute('content', 'width=' + vpW + ',initial-scale=' + scrnScale + ',user-scalable=0');
+        //        document.getElementsByName('viewport')[0].setAttribute('content', 'width=' + vpW + ',initial-scale=' + scrnScale + ',user-scalable=0');
     }
 }
 // ページ読み込み完了時の画面構築
