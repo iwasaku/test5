@@ -37,7 +37,7 @@ function setViewport() {
     }
     if (oldScale != scrnScale) {
         console.log("scrnH=" + scrnH + ", scrnW=" + scrnW + ", scrnScale" + scrnScale);
-        //        document.getElementsByName('viewport')[0].setAttribute('content', 'width=' + vpW + ',initial-scale=' + scrnScale + ',user-scalable=0');
+        document.getElementsByName('viewport')[0].setAttribute('content', 'width=' + vpW + ',initial-scale=' + scrnScale + ',user-scalable=0');
     }
 }
 // ページ読み込み完了時の画面構築
