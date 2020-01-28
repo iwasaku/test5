@@ -1,6 +1,3 @@
-// スクロールを無効にする
-document.addEventListener('touchmove.noScroll', function (e) { e.preventDefault(); }, { passive: false });
-
 //console.log = function () { };  // ログを出す時にはコメントアウトする
 const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
 let scrnScale = 1.0;
@@ -19,12 +16,14 @@ let shopCtrlCount = 0; //開店／準備中をコントロールするカウン�
 let shopStatus = true; //true:開店 false:準備中
 let houseCtrlCounter = 0;
 let scrn = new Array(SCRN_WIDTH * SCRN_HEIGHT); // 仮想画面
-let goalCount = 0; // ゴール回数
+let scoreBase = 1; // 基準スコア
 let udnCount = 0; // うどん獲得回数
 let score = 0; // スコア
 let myXpos = 0;  // 自キャラX座標
 let flag = false;   // ゲームの実行フラグ
-let tID = setTimeout('main()', 16);;
+let globalCounter = 0;
+let tID = setTimeout('main()', 16);
+let addToScreen = false;
 
 function setViewport() {
     const vpW = 32 * 13//32*13
@@ -56,8 +55,10 @@ function init0() {
     if (isIOS) {
         if (navigator.standalone) {
             console.log("standalone");
+            addToScreen = false;
         } else {
             console.log("browser");
+            addToScreen = true;
 
             var passiveSupported = false;
             try {
@@ -84,10 +85,17 @@ function init0() {
         }
     } else {
         console.log("other");
+        addToScreen = false;
     }
 
     document.getElementById("start").style.display = "block";
     document.getElementById("main").style.display = "none";
+    if (addToScreen) {
+        document.getElementById("add-to-screen").style.display = "block";
+    } else {
+        document.getElementById("add-to-screen").style.display = "none";
+    }
+
     for (let ii = 0; ii < SCRN_WIDTH * (SCRN_HEIGHT + 1); ii++) {
         let H = initpat.charAt(ii * 2);
         let L = initpat.charAt(ii * 2 + 1);
@@ -112,7 +120,7 @@ function start() {
         document.images[ii].src = "./resource/" + H + L + ".png";
     }
     myXpos = 0;
-    goalCount = 0;
+    scoreBase = 1;
     udnCount = 0;
     score = 0;
     qYdlyOfs = 30;
@@ -153,6 +161,7 @@ function qMoves() {
             document.images[SCRN_BOTTOM + xPos + 1].src = "./resource/2D.png";
             qYpos[xPos] = 0;
             qYdly[xPos] = Math.floor(Math.random() * 50) + 10 + qYdlyOfs;
+            if (qYdly[xPos] < 5) qYdly[xPos] = 5;
             qYcnt[xPos] = qYdly[xPos];
             if (++qCount > 30) {
                 qKind[xPos] = 3;
@@ -215,6 +224,9 @@ function main() {
                 document.images[SCRN_WIDTH * 0 + (8 + (5 - scStrLen) + idx)].src = "./resource/0" + tmp + ".png";
             }
         }
+        if (++globalCounter % 60 === 0) {
+            if (qYdlyOfs > -30) qYdlyOfs--;
+        }
     }
     tID = setTimeout('main()', 16);
 }
@@ -237,10 +249,11 @@ function checkColi() {
         setTweetButton();
     } else if (scrn[SCRN_BOTTOM + myXpos] === 3) {
         let tmpXpos = myXpos - 1;
-        if (qYdlyOfs > 0) qYdlyOfs--;
+        if (qYdlyOfs > -30) qYdlyOfs--;
         document.images[SCRN_BOTTOM + myXpos].src = "./resource/2A.png";
         qYpos[tmpXpos] = 0;
         qYdly[tmpXpos] = Math.floor(Math.random() * 50) + 10 + qYdlyOfs;
+        if (qYdly[tmpXpos] < 5) qYdly[tmpXpos] = 5;
         qYcnt[tmpXpos] = qYdly[tmpXpos];
         if (++qCount > 30) {
             qKind[tmpXpos] = 3;
@@ -275,7 +288,6 @@ function right() {
 
     if (myXpos === 0) {
         document.images[SCRN_BOTTOM + myXpos].src = "./resource/2P.png";
-
     } else {
         document.images[SCRN_BOTTOM + myXpos].src = "./resource/2D.png";
     }
@@ -283,9 +295,10 @@ function right() {
     document.images[SCRN_BOTTOM + myXpos].src = "./resource/2A.png";
     checkColi();
     if (myXpos < 12) return;
-    if (qYdlyOfs > 0) qYdlyOfs--;
-    goalCount++;
-    score += goalCount * (udnCount + 1);
+    if (qYdlyOfs > -30) qYdlyOfs--;
+    score += scoreBase * (udnCount + 1);
+    scoreBase = scoreBase * 2;
+    if (scoreBase > 256) scoreBase = 256;
     udnCount = 0;
     shopCtrlCount = 0;
     document.images[SCRN_BOTTOM + myXpos].src = "./resource/2G.png";
@@ -313,9 +326,9 @@ function setTweetButton() {
         "https://iwasaku.github.io/test5/UDN/index.html",   // url
         document.getElementById("tweet-area"),
         {
-            size: "small", //ボタンサイズ
-            text: "スコア＝" + score, // メッセージ
-            hashtags: "ネムレス,NEMLESSS,NMUDN", // ハッシュタグ
+            size: "large", //ボタンサイズ
+            text: "UDN スコア：" + score, // メッセージ
+            hashtags: "ネムレス,NEMLESSS", // ハッシュタグ
         }
     );
 }
