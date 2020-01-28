@@ -1,10 +1,5 @@
 // スクロールを無効にする
-$(window).on('touchmove.noScroll', function (e) {
-    e.preventDefault();
-});
-
-// スクロール無効を解除する
-$(window).off('.noScroll');
+document.addEventListener('touchmove.noScroll', function (e) { e.preventDefault(); }, { passive: false });
 
 //console.log = function () { };  // ログを出す時にはコメントアウトする
 const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
