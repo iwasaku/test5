@@ -328,7 +328,7 @@ function clearTweetButton() {
 function setTweetButton() {
     clearTweetButton(); //既存のボタン消す
     twttr.widgets.createShareButton(
-        "https://iwasaku.github.io/test5/UDN/index.html",   // url
+        "https://iwasaku.github.io/test5/UDN/",   // url
         document.getElementById("tweet-area"),
         {
             size: "large", //ボタンサイズ
