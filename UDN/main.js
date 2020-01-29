@@ -22,6 +22,7 @@ let score = 0; // スコア
 let myXpos = 0;  // 自キャラX座標
 let flag = false;   // ゲームの実行フラグ
 let globalCounter = 0;
+let delayOffset = 0;
 let tID = setTimeout('main()', 16);
 let addToScreen = false;
 
@@ -224,11 +225,16 @@ function main() {
                 document.images[SCRN_WIDTH * 0 + (8 + (5 - scStrLen) + idx)].src = "./resource/0" + tmp + ".png";
             }
         }
-        if (++globalCounter % 60 === 0) {
-            if (qYdlyOfs > -30) qYdlyOfs--;
-        }
+        if (++globalCounter % 60 === 0) calcqYdlyOfs();
     }
     tID = setTimeout('main()', 16);
+}
+
+function calcqYdlyOfs() {
+    if (--qYdlyOfs < -30) {
+        qYdlyOfs = 30 - (++delayOffset * 2);
+        if (qYdlyOfs < 0) qYdlyOfs = 0;
+    }
 }
 
 // 当たり判定
@@ -249,7 +255,7 @@ function checkColi() {
         setTweetButton();
     } else if (scrn[SCRN_BOTTOM + myXpos] === 3) {
         let tmpXpos = myXpos - 1;
-        if (qYdlyOfs > -30) qYdlyOfs--;
+        calcqYdlyOfs();
         document.images[SCRN_BOTTOM + myXpos].src = "./resource/2A.png";
         qYpos[tmpXpos] = 0;
         qYdly[tmpXpos] = Math.floor(Math.random() * 50) + 10 + qYdlyOfs;
@@ -295,7 +301,7 @@ function right() {
     document.images[SCRN_BOTTOM + myXpos].src = "./resource/2A.png";
     checkColi();
     if (myXpos < 12) return;
-    if (qYdlyOfs > -30) qYdlyOfs--;
+    calcqYdlyOfs();
     score += scoreBase * (udnCount + 1);
     scoreBase = scoreBase * 2;
     if (scoreBase > 1024) scoreBase = 1024;
