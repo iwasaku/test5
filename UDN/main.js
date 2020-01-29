@@ -1,4 +1,4 @@
-//console.log = function () { };  // ログを出す時にはコメントアウトする
+console.log = function () { };  // ログを出す時にはコメントアウトする
 const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
 let scrnScale = 1.0;
 setViewport();
@@ -298,7 +298,7 @@ function right() {
     if (qYdlyOfs > -30) qYdlyOfs--;
     score += scoreBase * (udnCount + 1);
     scoreBase = scoreBase * 2;
-    if (scoreBase > 256) scoreBase = 256;
+    if (scoreBase > 1024) scoreBase = 1024;
     udnCount = 0;
     shopCtrlCount = 0;
     document.images[SCRN_BOTTOM + myXpos].src = "./resource/2G.png";
@@ -321,7 +321,6 @@ function clearTweetButton() {
 // Tweetボタンを表示する
 function setTweetButton() {
     clearTweetButton(); //既存のボタン消す
-    // オプションは公式よんで。
     twttr.widgets.createShareButton(
         "https://iwasaku.github.io/test5/UDN/index.html",   // url
         document.getElementById("tweet-area"),
