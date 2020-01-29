@@ -28,7 +28,7 @@ let addToScreen = false;
 
 function setViewport() {
     const vpW = 32 * 13//32*13
-    const vpH = 32 * 9;//32*9
+    const vpH = 32 * 10;//32*9
     let scrnH = screen.height;
     let scrnW = screen.width;
     let oldScale = scrnScale;
