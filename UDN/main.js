@@ -161,7 +161,7 @@ function qMoves() {
         if (qYpos[xPos] > 5) {
             document.images[SCRN_BOTTOM + xPos + 1].src = "./resource/2D.png";
             qYpos[xPos] = 0;
-            qYdly[xPos] = Math.floor(Math.random() * 50) + 10 + qYdlyOfs;
+            qYdly[xPos] = Math.floor(Math.random() * 35) + 25 + qYdlyOfs;
             if (qYdly[xPos] < 5) qYdly[xPos] = 5;
             qYcnt[xPos] = qYdly[xPos];
             if (++qCount > 30) {
@@ -258,7 +258,7 @@ function checkColi() {
         calcqYdlyOfs();
         document.images[SCRN_BOTTOM + myXpos].src = "./resource/2A.png";
         qYpos[tmpXpos] = 0;
-        qYdly[tmpXpos] = Math.floor(Math.random() * 50) + 10 + qYdlyOfs;
+        qYdly[tmpXpos] = Math.floor(Math.random() * 35) + 25 + qYdlyOfs;
         if (qYdly[tmpXpos] < 5) qYdly[tmpXpos] = 5;
         qYcnt[tmpXpos] = qYdly[tmpXpos];
         if (++qCount > 30) {
