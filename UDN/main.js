@@ -374,7 +374,7 @@ tm.define("GameScene", {
                 player.status = PL_STATUS.START;
             }
 
-            //            checkHomeStatus();
+            checkHomeStatus();
             checkShopStatus();
             foMove();
             checkColi();
