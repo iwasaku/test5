@@ -279,7 +279,7 @@ tm.define("GameScene", {
                             text: "◀︎",
                             fontFamily: FONT_FAMILY,
                             fontSize: 32,
-                            width: 48,
+                            width: 64,
                             height: 48,
                             bgColor: "hsl(0, 100%, 50%)",
                         }
@@ -295,7 +295,7 @@ tm.define("GameScene", {
                             text: "▶︎",
                             fontFamily: FONT_FAMILY,
                             fontSize: 32,
-                            width: 48,
+                            width: 64,
                             height: 48,
                             bgColor: "hsl(0, 100%, 50%)",
                         }
