@@ -204,8 +204,8 @@ tm.define("GameScene", {
         group1 = tm.display.CanvasElement().addChildTo(this);   // 落下物
         group2 = tm.display.CanvasElement().addChildTo(this);   // プレイヤー
 
-        this.bg = tm.display.Sprite("bg", SCREEN_WIDTH, SCREEN_HEIGHT).addChildTo(group0);
-        this.bg.setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y);
+        this.bg = tm.display.Sprite("bg", SCREEN_WIDTH, SCREEN_HEIGHT * 1.005).addChildTo(group0);
+        this.bg.setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y + 1);
         homeDoor = new HomeDoorSprite().addChildTo(group0);
         shopUdon = new ShopUdonSprite().addChildTo(group0);
         shopDoor = new ShopDoorSprite().addChildTo(group0);
@@ -247,12 +247,12 @@ tm.define("GameScene", {
                             text: "TWEET",
                             fontFamily: FONT_FAMILY,
                             fontSize: 16,
-                            width: 96,
+                            width: 84,
                             height: 32,
                             bgColor: "hsl(205, 81%, 63%)",
                         }
                     ],
-                    x: SCREEN_CENTER_X + 32 * 2,
+                    x: SCREEN_CENTER_X + 32 * 2 - 4,
                     y: SCREEN_CENTER_Y + 32 * 3 + 8,
                     alpha: 0.0,
                 },
@@ -263,12 +263,12 @@ tm.define("GameScene", {
                             text: "RESTART",
                             fontFamily: FONT_FAMILY,
                             fontSize: 16,
-                            width: 128,
+                            width: 120,
                             height: 32,
                             bgColor: "hsl(240, 0%, 70%)",
                         }
                     ],
-                    x: SCREEN_CENTER_X - 32 * 2,
+                    x: SCREEN_CENTER_X - 32 * 2 + 4,
                     y: SCREEN_CENTER_Y + 32 * 3 + 8,
                     alpha: 0.0,
                 },
@@ -279,12 +279,12 @@ tm.define("GameScene", {
                             text: "◀︎",
                             fontFamily: FONT_FAMILY,
                             fontSize: 32,
-                            width: 64,
+                            width: 72,
                             height: 48,
                             bgColor: "hsl(0, 100%, 50%)",
                         }
                     ],
-                    x: SCREEN_CENTER_X - 32 * 6 + 16,
+                    x: SCREEN_CENTER_X - 32 * 6 + 20,
                     y: SCREEN_CENTER_Y + 32 * 3 - 4,
                     alpha: 1.0,
                 },
@@ -295,12 +295,12 @@ tm.define("GameScene", {
                             text: "▶︎",
                             fontFamily: FONT_FAMILY,
                             fontSize: 32,
-                            width: 64,
+                            width: 72,
                             height: 48,
                             bgColor: "hsl(0, 100%, 50%)",
                         }
                     ],
-                    x: SCREEN_CENTER_X + 32 * 6 - 16,
+                    x: SCREEN_CENTER_X + 32 * 6 - 20,
                     y: SCREEN_CENTER_Y + 32 * 3 - 4,
                     alpha: 1.0,
                 },
