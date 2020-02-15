@@ -12,6 +12,9 @@
         gtag('config', 'UA-148521123-1');
     </script>
 
+    <!-- Tweet Button -->
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
     <link rel="icon" href="./favicon/favicon.ico">
     <link rel="icon" type="image/png" href="./favicon/icon-16x16.png" sizes="16x16">
     <link rel="icon" type="image/png" href="./favicon/icon-32x32.png" sizes="32x32">
@@ -32,6 +35,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
 
     <title>UDN</title>
+    <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
     <style>
         body {
             color: #ffffff;
@@ -40,15 +44,135 @@
 
             font-family: 'Press Start 2P';
         }
+
+        a img {
+            border: none;
+        }
     </style>
-    <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
-    <script src="https://cdn.jsdelivr.net/gh/phi-jp/tmlib.js@0.3.0/build/tmlib.js"></script>
-    <script src='enum.js'></script>
-    <script src='main_test.js?202002160209'></script>
+    <script src='main.js?202002160220'></script>
 </head>
 
-<body>
-    <canvas id="world"></canvas>
+<body onload="init0()">
+    <div style="text-align: center;white-space: nowrap;">
+        <div id="main"
+            style="position: absolute;top: 50%;left: 50%;-webkit-transform: translate(-50%,-50%);transform: translate(-50%,-50%);text-align: center;">
+            <img style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/2D.png" width="32" height="32"><br>
+            <img style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/01.png" width="32" height="32"><br>
+            <img style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/02.png" width="32" height="32"><br>
+            <img style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/03.png" width="32" height="32"><br>
+            <img style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/04.png" width="32" height="32"><br>
+            <img style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/05.png" width="32" height="32"><br>
+            <img style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><img
+                style="vertical-align:bottom" src="./resource/06.png" width="32" height="32"><br>
+            <a href="javascript:left()"><img src="./resource/l_arrow.png" width="64" height="32"></a><img
+                src="./resource/2F.png" width="32" height="32"><img src="./resource/2F.png" width="32" height="32"><img
+                src="./resource/2F.png" width="32" height="32"><img src="./resource/2F.png" width="32" height="32"><img
+                src="./resource/2F.png" width="32" height="32"><img src="./resource/2F.png" width="32" height="32"><img
+                src="./resource/2F.png" width="32" height="32"><img src="./resource/2F.png" width="32" height="32"><img
+                src="./resource/2F.png" width="32" height="32"><a href="javascript:right()"><img
+                    src="./resource/r_arrow.png" width="64" height="32"></a>
+            <br>
+            <a id="start-button" href="javascript:start()"><img src="./resource/START.png" width="160" height="32"></a>
+            <span id="tweet-area">
+                <!-- ここにボタンができる-->
+            </span>
+        </div>
+        <div id="start"
+            style="position: absolute;top: 50%;left: 50%;-webkit-transform: translate(-50%,-50%);transform: translate(-50%,-50%);text-align: center;">
+            UDN
+            <br>
+            <br>
+            <br>
+            <br>
+            <a id="start-button" href="javascript:start()"><img src="./resource/START.png" width="160" height="32"></a>
+            <br>
+            <br>
+            <span id="add-to-screen">『ホーム画面に追加』<br>を<br>お試し下さい</span>
+        </div>
+    </div>
 </body>
 
 </html>
