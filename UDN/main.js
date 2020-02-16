@@ -276,12 +276,12 @@ tm.define("GameScene", {
                     type: "FlatButton", name: "leftButton",
                     init: [
                         {
-                            text: "◀︎",
+                            text: "",
                             fontFamily: FONT_FAMILY,
                             fontSize: 32,
                             width: 72,
                             height: 48,
-                            bgColor: "hsl(0, 100%, 50%)",
+                            bgColor: "hsl(0, 0%, 100%)",
                         }
                     ],
                     x: SCREEN_CENTER_X - 32 * 6 + 20,
@@ -289,20 +289,44 @@ tm.define("GameScene", {
                     alpha: 1.0,
                 },
                 {
+                    type: "Label", name: "leftLabel",
+                    x: SCREEN_CENTER_X - 32 * 6 + 16,
+                    y: SCREEN_CENTER_Y + 32 * 3 - 8,
+                    fillStyle: "#000",
+                    shadowColor: "#000",
+                    shadowBlur: 0,
+                    fontSize: 32,
+                    fontFamily: FONT_FAMILY,
+                    text: "◀︎",
+                    align: "center",
+                },
+                {
                     type: "FlatButton", name: "rightButton",
                     init: [
                         {
-                            text: "▶︎",
+                            text: "",
                             fontFamily: FONT_FAMILY,
                             fontSize: 32,
                             width: 72,
                             height: 48,
-                            bgColor: "hsl(0, 100%, 50%)",
+                            bgColor: "hsl(0, 0%, 100%)",
                         }
                     ],
                     x: SCREEN_CENTER_X + 32 * 6 - 20,
                     y: SCREEN_CENTER_Y + 32 * 3 - 4,
                     alpha: 1.0,
+                },
+                {
+                    type: "Label", name: "rightLabel",
+                    x: SCREEN_CENTER_X + 32 * 6 - 16,
+                    y: SCREEN_CENTER_Y + 32 * 3 - 8,
+                    fillStyle: "#000",
+                    shadowColor: "#000",
+                    shadowBlur: 0,
+                    fontSize: 32,
+                    fontFamily: FONT_FAMILY,
+                    text: "▶︎",
+                    align: "center",
                 },
             ]
         });
@@ -366,8 +390,8 @@ tm.define("GameScene", {
         if (!player.status.isDead) {
             if (!player.status.isStart) {
                 this.gameOverLabel.setAlpha(0.0);
-                this.leftButton.setAlpha(0.4);
-                this.rightButton.setAlpha(0.4);
+                this.leftButton.setAlpha(0.5);
+                this.rightButton.setAlpha(0.5);
 
                 this.leftButton.wakeUp();
                 this.rightButton.wakeUp();
