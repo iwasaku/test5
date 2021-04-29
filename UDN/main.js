@@ -136,8 +136,8 @@ tm.define("LogoScene", {
 
     update: function (app) {
         // 時間が来たらタイトルへ
-        if (++this.localTimer >= 5 * app.fps)
-            this.app.replaceScene(TitleScene());
+        //if (++this.localTimer >= 5 * app.fps)
+        this.app.replaceScene(TitleScene());
     }
 });
 
