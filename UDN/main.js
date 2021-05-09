@@ -75,6 +75,7 @@ let score = 0; // スコア
 let myXpos = 0;  // 自キャラX座標
 let frame = 0;
 let delayOffset = 0;
+var fitWindowTimer = 0;
 
 let group0 = null;
 let group1 = null;
@@ -87,7 +88,7 @@ tm.main(function () {
     // アプリケーションクラスを生成
     var app = tm.display.CanvasApp("#world");
     app.resize(SCREEN_WIDTH, SCREEN_HEIGHT);    // サイズ(解像度)設定
-    app.fitWindow();                            // 自動フィッティング有効
+    app.fitWindow(false);                       // 手動フィッティング
     app.background = "rgba(77, 136, 255, 1.0)"; // 背景色
     app.fps = FPS;                              // フレーム数
 
@@ -138,6 +139,7 @@ tm.define("LogoScene", {
         // 時間が来たらタイトルへ
         //if (++this.localTimer >= 5 * app.fps)
         this.app.replaceScene(TitleScene());
+        app.fitWindow(false);                       // 手動フィッティング
     }
 });
 
@@ -188,6 +190,7 @@ tm.define("TitleScene", {
 
     update: function (app) {
         app.background = "rgba(0, 0, 0, 1.0)"; // 背景色
+        app.fitWindow(false);                       // 手動フィッティング
     }
 });
 
@@ -361,6 +364,7 @@ tm.define("GameScene", {
         shopStatus = true;
         homeCtrlCount = 0;
         homeStatus = true;
+        fitWindowTimer = 0;
 
         // 落下物初期化
         for (let ii = 1; ii <= 11; ii++) {
@@ -386,7 +390,7 @@ tm.define("GameScene", {
 
     // main loop
     update: function (app) {
-
+        if (++fitWindowTimer % 15 === 0) app.fitWindow(false);    // 手動フィッティング
         if (!player.status.isDead) {
             if (!player.status.isStart) {
                 this.gameOverLabel.setAlpha(0.0);
