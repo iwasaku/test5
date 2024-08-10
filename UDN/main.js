@@ -1,3 +1,5 @@
+phina.globalize();
+
 console.log = function () { };  // ログを出す時にはコメントアウトする
 
 const SCREEN_WIDTH = 416;              // スクリーン幅
@@ -7,15 +9,17 @@ const SCREEN_CENTER_Y = SCREEN_HEIGHT / 2;  // スクリーン高さの半分
 
 const FONT_FAMILY = "'Press Start 2P','Meiryo',sans-serif";
 const ASSETS = {
-    "player": "./resource/2A.png",
-    "hit": "./resource/2H.png",
-    "cuke": "./resource/2B.png", // 胡瓜
-    "cup": "./resource/2I.png", // カップうどん
-    "home_door": "./resource/2P.png",   // 家のドア
-    "shop_door": "./resource/2E.png",   // 店のドア
-    "udon": "./resource/2G.png",    // 天ぷらうどん
+    image: {
+        "player": "./resource/2A.png",
+        "hit": "./resource/2H.png",
+        "cuke": "./resource/2B.png", // 胡瓜
+        "cup": "./resource/2I.png", // カップうどん
+        "home_door": "./resource/2P.png",   // 家のドア
+        "shop_door": "./resource/2E.png",   // 店のドア
+        "udon": "./resource/2G.png",    // 天ぷらうどん
 
-    "bg": "./resource/bg.png",  // 背景
+        "bg": "./resource/bg.png",  // 背景
+    },
 };
 
 // 定義
@@ -80,135 +84,171 @@ var fitWindowTimer = 0;
 let group0 = null;
 let group1 = null;
 let group2 = null;
+let group3 = null;
 let player = null;
 let homeDoor = null;
 let shopDoor = null;
 let shopUdon = null;
-tm.main(function () {
-    // アプリケーションクラスを生成
-    var app = tm.display.CanvasApp("#world");
-    app.resize(SCREEN_WIDTH, SCREEN_HEIGHT);    // サイズ(解像度)設定
-    app.fitWindow(false);                       // 手動フィッティング
-    app.background = "rgba(77, 136, 255, 1.0)"; // 背景色
-    app.fps = FPS;                              // フレーム数
 
-    var loading = tm.ui.LoadingScene({
-        assets: ASSETS,
+phina.main(function () {
+    var app = GameApp({
+        startLabel: 'logo',
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
+        assets: ASSETS,
+        fps: FPS,
+        backgroundColor: 'black',
+
+        // シーンのリストを引数で渡す
+        scenes: [
+            {
+                className: 'LogoScene',
+                label: 'logo',
+                nextLabel: 'title',
+            },
+            {
+                className: 'TitleScene',
+                label: 'title',
+                nextLabel: 'game',
+            },
+            {
+                className: 'GameScene',
+                label: 'game',
+                nextLabel: 'game',
+            },
+        ]
     });
 
-    // 読み込み完了後に呼ばれるメソッドを登録
-    loading.onload = function () {
-        app.replaceScene(LogoScene());
-    };
+    // iOSなどでユーザー操作がないと音がならない仕様対策
+    // 起動後初めて画面をタッチした時に『無音』を鳴らす
+    app.domElement.addEventListener('touchend', function dummy() {
+        var s = phina.asset.Sound();
+        s.loadFromBuffer();
+        s.play().stop();
+        app.domElement.removeEventListener('touchend', dummy);
+    });
 
-    // ローディングシーンに入れ替える
-    app.replaceScene(loading);
+    // fps表示
+    //app.enableStats();
 
     // 実行
     app.run();
 });
 
 /*
+* ローディング画面をオーバーライド
+*/
+phina.define('LoadingScene', {
+    superClass: 'DisplayScene',
+
+    init: function (options) {
+        this.superInit(options);
+        // 背景色
+        var self = this;
+        var loader = phina.asset.AssetLoader();
+
+        // 明滅するラベル
+        let label = phina.display.Label({
+            text: "",
+            fontSize: 64,
+            fill: 'white',
+        }).addChildTo(this).setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y);
+
+        // ロードが進行したときの処理
+        loader.onprogress = function (e) {
+            // 進捗具合を％で表示する
+            label.text = "{0}%".format((e.progress * 100).toFixed(0));
+        };
+
+        // ローダーによるロード完了ハンドラ
+        loader.onload = function () {
+            // Appコアにロード完了を伝える（==次のSceneへ移行）
+            self.flare('loaded');
+        };
+
+        // ロード開始
+        loader.load(options.assets);
+    },
+});
+
+/*
  * ロゴ
  */
-tm.define("LogoScene", {
-    superClass: "tm.app.Scene",
+phina.define("LogoScene", {
+    superClass: 'DisplayScene',
 
-    init: function () {
-        this.superInit();
-        this.fromJSON({
-            children: [
-                {
-                    type: "Label", name: "logoLabel",
-                    x: SCREEN_CENTER_X,
-                    y: SCREEN_CENTER_Y,
-                    fillStyle: "#888",
-                    fontSize: 16,
-                    fontFamily: FONT_FAMILY,
-                    text: "UNOFFICIAL GAME",
-                    align: "center",
-                },
-            ]
-        });
+    init: function (option) {
+        this.superInit(option);
         this.localTimer = 0;
     },
 
     update: function (app) {
-        // 時間が来たらタイトルへ
-        //if (++this.localTimer >= 5 * app.fps)
-        this.app.replaceScene(TitleScene());
-        app.fitWindow(false);                       // 手動フィッティング
+        // フォント読み込み待ち
+        var self = this;
+        document.fonts.load('12px "Press Start 2P"').then(function () {
+            self.exit();
+        });
     }
 });
 
 /*
  * タイトル
  */
-tm.define("TitleScene", {
-    superClass: "tm.app.Scene",
+phina.define("TitleScene", {
+    superClass: 'DisplayScene',
 
-    init: function () {
-        this.superInit();
-        this.fromJSON({
-            children: [
-                {
-                    type: "Label", name: "titleLabel",
-                    x: SCREEN_CENTER_X,
-                    y: SCREEN_CENTER_Y,
-                    fillStyle: "#fff",
-                    fontSize: 32,
-                    fontFamily: FONT_FAMILY,
-                    text: "UDN",
-                    align: "center",
-                },
-                {
-                    type: "FlatButton", name: "startButton",
-                    init: [
-                        {
-                            text: "START",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 16,
-                            width: 128,
-                            height: 32,
-                            bgColor: "hsl(240, 0%, 70%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X,
-                    y: SCREEN_CENTER_Y + 64,
-                },
-            ]
-        });
+    init: function (option) {
+        this.superInit(option);
+
+        this.titleLabel = Label({
+            text: "UDN",
+            fontSize: 32,
+            fontFamily: FONT_FAMILY,
+            align: "center",
+            fill: "#fff",
+            x: SCREEN_CENTER_X,
+            y: SCREEN_CENTER_Y,
+        }).addChildTo(this);
+        this.startButton = Button({
+            text: "START",
+            fontSize: 16,
+            fontFamily: FONT_FAMILY,
+            fill: "#444",
+            x: SCREEN_CENTER_X,
+            y: SCREEN_CENTER_Y + 64,
+            cornerRadius: 8,
+            width: 128,
+            height: 32,
+        }).addChildTo(this);
+
         this.localTimer = 0;
 
         var self = this;
-        this.startButton.onpointingstart = function () {
-            self.app.replaceScene(GameScene());
+        this.startButton.onpointstart = function () {
+            self.exit();
         };
     },
 
     update: function (app) {
-        app.background = "rgba(0, 0, 0, 1.0)"; // 背景色
-        app.fitWindow(false);                       // 手動フィッティング
     }
 });
 
 /*
  * ゲーム
  */
-tm.define("GameScene", {
-    superClass: "tm.app.Scene",
+phina.define("GameScene", {
+    superClass: 'DisplayScene',
 
-    init: function () {
-        this.superInit();
+    init: function (option) {
+        this.superInit(option);
 
-        group0 = tm.display.CanvasElement().addChildTo(this);   // 背景、ドア
-        group1 = tm.display.CanvasElement().addChildTo(this);   // 落下物
-        group2 = tm.display.CanvasElement().addChildTo(this);   // プレイヤー
+        group0 = DisplayElement().addChildTo(this);   // 背景、ドア
+        group1 = DisplayElement().addChildTo(this);   // 落下物
+        group2 = DisplayElement().addChildTo(this);   // プレイヤー
+        group3 = DisplayElement().addChildTo(this);   // ステータス
 
-        this.bg = tm.display.Sprite("bg", SCREEN_WIDTH, SCREEN_HEIGHT * 1.005).addChildTo(group0);
-        this.bg.setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y + 1);
+        this.bg = phina.display.Sprite("bg").addChildTo(group0);
+        this.bg.setPosition(SCREEN_CENTER_X, SCREEN_CENTER_Y + 1).setSize(SCREEN_WIDTH, SCREEN_HEIGHT * 1.005);
         homeDoor = new HomeDoorSprite().addChildTo(group0);
         shopUdon = new ShopUdonSprite().addChildTo(group0);
         shopDoor = new ShopDoorSprite().addChildTo(group0);
@@ -217,138 +257,100 @@ tm.define("GameScene", {
         }
         player = new MySprite("player").addChildTo(group2);
 
-        this.fromJSON({
-            children: [
-                {
-                    type: "Label", name: "nowScoreLabel",
-                    x: SCREEN_WIDTH - 16,
-                    y: 16,
-                    fillStyle: "#000",
-                    shadowColor: "#000",
-                    shadowBlur: 0,
-                    fontSize: 16,
-                    fontFamily: FONT_FAMILY,
-                    text: "0",
-                    align: "right",
-                },
-                {
-                    type: "Label", name: "gameOverLabel",
-                    x: SCREEN_CENTER_X,
-                    y: SCREEN_CENTER_Y - 32 - 16,
-                    fillStyle: "#000",
-                    shadowColor: "#000",
-                    shadowBlur: 0,
-                    fontSize: 16,
-                    fontFamily: FONT_FAMILY,
-                    text: "G A M E  O V E R",
-                    align: "center",
-                },
-                {
-                    type: "FlatButton", name: "tweetButton",
-                    init: [
-                        {
-                            text: "TWEET",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 16,
-                            width: 84,
-                            height: 32,
-                            bgColor: "hsl(205, 81%, 63%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X + 32 * 2 - 4,
-                    y: SCREEN_CENTER_Y + 32 * 3 + 8,
-                    alpha: 0.0,
-                },
-                {
-                    type: "FlatButton", name: "restartButton",
-                    init: [
-                        {
-                            text: "RESTART",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 16,
-                            width: 120,
-                            height: 32,
-                            bgColor: "hsl(240, 0%, 70%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 32 * 2 + 4,
-                    y: SCREEN_CENTER_Y + 32 * 3 + 8,
-                    alpha: 0.0,
-                },
-                {
-                    type: "FlatButton", name: "leftButton",
-                    init: [
-                        {
-                            text: "",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 32,
-                            width: 72,
-                            height: 48,
-                            bgColor: "hsl(0, 0%, 100%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X - 32 * 6 + 20,
-                    y: SCREEN_CENTER_Y + 32 * 3 - 4,
-                    alpha: 1.0,
-                },
-                {
-                    type: "Label", name: "leftLabel",
-                    x: SCREEN_CENTER_X - 32 * 6 + 16,
-                    y: SCREEN_CENTER_Y + 32 * 3 - 8,
-                    fillStyle: "#000",
-                    shadowColor: "#000",
-                    shadowBlur: 0,
-                    fontSize: 32,
-                    fontFamily: FONT_FAMILY,
-                    text: "◀︎",
-                    align: "center",
-                },
-                {
-                    type: "FlatButton", name: "rightButton",
-                    init: [
-                        {
-                            text: "",
-                            fontFamily: FONT_FAMILY,
-                            fontSize: 32,
-                            width: 72,
-                            height: 48,
-                            bgColor: "hsl(0, 0%, 100%)",
-                        }
-                    ],
-                    x: SCREEN_CENTER_X + 32 * 6 - 20,
-                    y: SCREEN_CENTER_Y + 32 * 3 - 4,
-                    alpha: 1.0,
-                },
-                {
-                    type: "Label", name: "rightLabel",
-                    x: SCREEN_CENTER_X + 32 * 6 - 16,
-                    y: SCREEN_CENTER_Y + 32 * 3 - 8,
-                    fillStyle: "#000",
-                    shadowColor: "#000",
-                    shadowBlur: 0,
-                    fontSize: 32,
-                    fontFamily: FONT_FAMILY,
-                    text: "▶︎",
-                    align: "center",
-                },
-            ]
-        });
+        this.nowScoreLabel = Label({
+            text: "0",
+            fontSize: 16,
+            fontFamily: FONT_FAMILY,
+            align: "right",
+            fill: "#000",
+            shadow: "#000",
+            shadowBlur: 0,
+            x: SCREEN_WIDTH - 16,
+            y: 16,
+        }).addChildTo(group3);
+        this.gameOverLabel = Label({
+            text: "G A M E  O V E R",
+            fontSize: 16,
+            fontFamily: FONT_FAMILY,
+            align: "center",
+            fill: "#000",
+            shadow: "#000",
+            shadowBlur: 0,
+            x: SCREEN_CENTER_X,
+            y: SCREEN_CENTER_Y - 32 - 16,
+        }).addChildTo(group3);
+        this.tweetButton = Button({
+            text: "POST",
+            fontSize: 16,
+            fontFamily: FONT_FAMILY,
+            fill: "#7575EF",  // ボタン色
+            x: SCREEN_CENTER_X - (32 * 2 + 4),
+            y: SCREEN_CENTER_Y + 32 * 3 + 8,
+            cornerRadius: 8,
+            width: 120,
+            height: 32,
+        }).addChildTo(group3);
+        this.tweetButton.alpha = 0.0;
+        this.restartButton = Button({
+            text: "RESTART",
+            fontSize: 16,
+            fontFamily: FONT_FAMILY,
+            fill: "#B2B2B2",
+            x: SCREEN_CENTER_X + (32 * 2 + 4),
+            y: SCREEN_CENTER_Y + 32 * 3 + 8,
+            cornerRadius: 8,
+            width: 120,
+            height: 32,
+        }).addChildTo(group3);
+        this.restartButton.alpha = 0.0;
+        this.leftButton = Button({
+            text: "◀︎",
+            fontSize: 32,
+            fontFamily: FONT_FAMILY,
+            fontColor: "#000",
+            fill: "#fff",
+            x: SCREEN_CENTER_X - 32 * 6 + 20,
+            y: SCREEN_CENTER_Y + 32 * 3 - 4,
+            width: 72,
+            height: 48,
+        }).addChildTo(group3);
+        this.rightButton = Button({
+            text: "▶︎",
+            fontSize: 32,
+            fontFamily: FONT_FAMILY,
+            fontColor: "#000",
+            fill: "#fff",
+            x: SCREEN_CENTER_X + 32 * 6 - 20,
+            y: SCREEN_CENTER_Y + 32 * 3 - 4,
+            width: 72,
+            height: 48,
+        }).addChildTo(group3);
 
         this.tweetButton.sleep();
         this.restartButton.sleep();
 
         var self = this;
-        this.restartButton.onpointingstart = function () {
-            self.app.replaceScene(GameScene());
+        this.tweetButton.onclick = function () {
+            var twitterURL = phina.social.Twitter.createURL({
+                type: "tweet",
+                text: "UDN スコア：" + self.nowScoreLabel.text + "\n",
+                hashtags: ["ネムレス", "NEMLESSS"],
+                url: "https://iwasaku.github.io/test5/UDN/",
+            });
+            window.open(twitterURL);
+        };
+
+        this.restartButton.onpointstart = function () {
+            self.exit();
         };
 
         this.leftButton.sleep();
-        this.leftButton.onpointingstart = function () {
+        this.leftButton.onpointstart = function () {
             left();
         };
 
         this.rightButton.sleep();
-        this.rightButton.onpointingstart = function () {
+        this.rightButton.onpointstart = function () {
             right();
         };
 
@@ -390,12 +392,12 @@ tm.define("GameScene", {
 
     // main loop
     update: function (app) {
-        if (++fitWindowTimer % 15 === 0) app.fitWindow(false);    // 手動フィッティング
+        if (++fitWindowTimer % 15 === 0) app.fit = false;    // 手動フィッティング
         if (!player.status.isDead) {
             if (!player.status.isStart) {
-                this.gameOverLabel.setAlpha(0.0);
-                this.leftButton.setAlpha(0.5);
-                this.rightButton.setAlpha(0.5);
+                this.gameOverLabel.alpha = 0.0;
+                this.leftButton.alpha = 0.5;
+                this.rightButton.alpha = 0.5;
 
                 this.leftButton.wakeUp();
                 this.rightButton.wakeUp();
@@ -410,18 +412,6 @@ tm.define("GameScene", {
             if (++frame % FPS === 0) calcfoYdlyOfs();
 
         } else {
-            var self = this;
-            // tweet ボタン
-            this.tweetButton.onclick = function () {
-                var twitterURL = tm.social.Twitter.createURL({
-                    type: "tweet",
-                    text: "UDN スコア：" + self.nowScoreLabel.text,
-                    hashtags: ["ネムレス", "NEMLESSS"],
-                    url: "https://iwasaku.github.io/test5/UDN/",
-                });
-                window.open(twitterURL);
-            };
-
             this.leftButton.sleep();
             this.rightButton.sleep();
 
@@ -429,9 +419,9 @@ tm.define("GameScene", {
             if (this.buttonAlpha > 1.0) {
                 this.buttonAlpha = 1.0;
             }
-            this.gameOverLabel.setAlpha(this.buttonAlpha);
-            this.tweetButton.setAlpha(this.buttonAlpha);
-            this.restartButton.setAlpha(this.buttonAlpha);
+            this.gameOverLabel.alpha = this.buttonAlpha;
+            this.tweetButton.alpha = this.buttonAlpha;
+            this.restartButton.alpha = this.buttonAlpha;
             if (this.buttonAlpha > 0.7) {
                 this.tweetButton.wakeUp();
                 this.restartButton.wakeUp();
@@ -443,17 +433,16 @@ tm.define("GameScene", {
 /*
  * Player
  */
-tm.define("MySprite", {
-    superClass: "tm.app.Sprite",
+phina.define("MySprite", {
+    superClass: "Sprite",
 
     init: function (sprName) {
-        this.superInit(sprName, 32, 32);
+        this.superInit(sprName);
         this.direct = '';
+        this.setPosition(xPosTable[myXpos], yPosTable[5]).setSize(32, 32).setScale(1, 1);
         this.setInteractive(false);
         this.setBoundingType("rect");
         this.alpha = 1.0;
-        this.x = xPosTable[myXpos];
-        this.y = yPosTable[5];
 
         this.status = PL_STATUS.INIT;
     },
@@ -466,18 +455,17 @@ tm.define("MySprite", {
 /*
  * 落下物
  */
-tm.define("FoSprite", {
-    superClass: "tm.app.Sprite",
+phina.define("FoSprite", {
+    superClass: "Sprite",
 
     init: function (xIndex, sprName) {
-        this.superInit(sprName, 32, 32);
+        this.superInit(sprName);
         this.direct = '';
+        this.setPosition(xPosTable[xIndex], yPosTable[0]).setSize(32, 32).setScale(1, 1);
         this.setInteractive(false);
         this.setBoundingType("rect");
         this.alpha = 1.0;
         this.xIndex = xIndex;
-        this.x = xPosTable[xIndex];
-        this.y = yPosTable[0];
     },
 
     update: function (app) {
@@ -491,17 +479,16 @@ tm.define("FoSprite", {
 /*
  * 家のドア
  */
-tm.define("HomeDoorSprite", {
-    superClass: "tm.app.Sprite",
+phina.define("HomeDoorSprite", {
+    superClass: "Sprite",
 
-    init: function () {
-        this.superInit("home_door", 32, 32);
+    init: function (option) {
+        this.superInit("home_door");
         this.direct = '';
+        this.setPosition(xPosTable[0], yPosTable[5]).setSize(32, 32).setScale(1, 1);
         this.setInteractive(false);
         this.setBoundingType("rect");
         this.alpha = 1.0;
-        this.x = xPosTable[0];
-        this.y = yPosTable[5];
     },
 
     update: function (app) {
@@ -513,17 +500,16 @@ tm.define("HomeDoorSprite", {
 /*
  * 店のドア
  */
-tm.define("ShopDoorSprite", {
-    superClass: "tm.app.Sprite",
+phina.define("ShopDoorSprite", {
+    superClass: "Sprite",
 
-    init: function () {
-        this.superInit("shop_door", 32, 32);
+    init: function (option) {
+        this.superInit("shop_door");
         this.direct = '';
+        this.setPosition(xPosTable[12], yPosTable[5]).setSize(32, 32).setScale(1, 1);
         this.setInteractive(false);
         this.setBoundingType("rect");
         this.alpha = 1.0;
-        this.x = xPosTable[12];
-        this.y = yPosTable[5];
     },
 
     update: function (app) {
@@ -534,12 +520,13 @@ tm.define("ShopDoorSprite", {
 /*
  * 店のうどん
  */
-tm.define("ShopUdonSprite", {
-    superClass: "tm.app.Sprite",
+phina.define("ShopUdonSprite", {
+    superClass: "Sprite",
 
-    init: function () {
-        this.superInit("udon", 32, 32);
+    init: function (option) {
+        this.superInit("udon");
         this.direct = '';
+        this.setPosition(xPosTable[12], yPosTable[5]).setSize(32, 32).setScale(1, 1);
         this.setInteractive(false);
         this.setBoundingType("rect");
         this.alpha = 1.0;
