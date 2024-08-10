@@ -79,7 +79,6 @@ let score = 0; // スコア
 let myXpos = 0;  // 自キャラX座標
 let frame = 0;
 let delayOffset = 0;
-var fitWindowTimer = 0;
 
 let group0 = null;
 let group1 = null;
@@ -366,7 +365,6 @@ phina.define("GameScene", {
         shopStatus = true;
         homeCtrlCount = 0;
         homeStatus = true;
-        fitWindowTimer = 0;
 
         // 落下物初期化
         for (let ii = 1; ii <= 11; ii++) {
@@ -392,7 +390,6 @@ phina.define("GameScene", {
 
     // main loop
     update: function (app) {
-        if (++fitWindowTimer % 15 === 0) app.fit = false;    // 手動フィッティング
         if (!player.status.isDead) {
             if (!player.status.isStart) {
                 this.gameOverLabel.alpha = 0.0;
