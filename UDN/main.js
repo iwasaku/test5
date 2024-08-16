@@ -347,7 +347,7 @@ phina.define("GameScene", {
         }).addChildTo(group3);
         this.bskyButton.onclick = function () {
             // https://docs.bsky.app/docs/advanced-guides/intent-links
-            let shareURL = "https://bsky.app/intent/compose?text=" + encodeURIComponent((postText + "\n" + postTags + "\n" + postURL).replace(/\n/g, "<br>"));
+            let shareURL = "https://bsky.app/intent/compose?text=" + encodeURIComponent(postText + "\n" + postTags + "\n" + postURL);
             window.open(shareURL);
         };
         this.bskyButton.alpha = 0.0;
