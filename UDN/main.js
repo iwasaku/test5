@@ -89,6 +89,11 @@ let homeDoor = null;
 let shopDoor = null;
 let shopUdon = null;
 
+// 共有ボタン用
+let postText = null;
+const postURL = "https://iwasaku.github.io/test5/UDN/";
+const postTags = "#ネムレス #NEMLESSS";
+
 phina.main(function () {
     var app = GameApp({
         startLabel: 'logo',
@@ -179,14 +184,22 @@ phina.define("LogoScene", {
     init: function (option) {
         this.superInit(option);
         this.localTimer = 0;
+        this.font1 = false;
+        this.font2 = false;
     },
 
     update: function (app) {
-        // フォント読み込み待ち
+        // フォントロード完了待ち
         var self = this;
-        document.fonts.load('12px "Press Start 2P"').then(function () {
-            self.exit();
+        document.fonts.load('10pt "Press Start 2P"').then(function () {
+            self.font1 = true;
         });
+        document.fonts.load('10pt "icomoon"').then(function () {
+            self.font2 = true;
+        });
+        if (this.font1 && this.font2) {
+            self.exit();
+        }
     }
 });
 
@@ -278,18 +291,69 @@ phina.define("GameScene", {
             x: SCREEN_CENTER_X,
             y: SCREEN_CENTER_Y - 32 - 16,
         }).addChildTo(group3);
-        this.tweetButton = Button({
-            text: "POST",
+
+        // X
+        this.xButton = Button({
+            text: String.fromCharCode(0xe902),
             fontSize: 16,
-            fontFamily: FONT_FAMILY,
-            fill: "#7575EF",  // ボタン色
-            x: SCREEN_CENTER_X - (32 * 2 + 4),
-            y: SCREEN_CENTER_Y + 32 * 3 + 8,
+            fontFamily: "icomoon",
+            fill: "#7575EF",
+            x: SCREEN_CENTER_X - (64 + 4) - 40,
+            y: SCREEN_CENTER_Y + (96 + 8),
             cornerRadius: 8,
-            width: 120,
+            width: 32,
             height: 32,
         }).addChildTo(group3);
-        this.tweetButton.alpha = 0.0;
+        this.xButton.onclick = function () {
+            // https://developer.x.com/en/docs/twitter-for-websites/tweet-button/guides/web-intent
+            let shareURL = "https://x.com/intent/tweet?text=" + encodeURIComponent(postText + "\n" + postTags + "\n") + "&url=" + encodeURIComponent(postURL);
+            window.open(shareURL);
+        };
+        this.xButton.alpha = 0.0;
+        this.xButton.sleep();
+
+        // threads
+        this.threadsButton = Button({
+            text: String.fromCharCode(0xe901),
+            fontSize: 16,
+            fontFamily: "icomoon",
+            fill: "#7575EF",
+            x: SCREEN_CENTER_X - (64 + 4),
+            y: SCREEN_CENTER_Y + (96 + 8),
+            cornerRadius: 8,
+            width: 32,
+            height: 32,
+        }).addChildTo(group3);
+        this.threadsButton.onclick = function () {
+            // https://developers.facebook.com/docs/threads/threads-web-intents/
+            // web intentでのハッシュタグの扱いが環境（ブラウザ、iOS、Android）によって違いすぎるので『#』を削って通常の文字列にしておく
+            let shareURL = "https://www.threads.net/intent/post?text=" + encodeURIComponent(postText + "\n\n" + postTags.replace(/#/g, "")) + "&url=" + encodeURIComponent(postURL);
+            window.open(shareURL);
+        };
+        this.threadsButton.alpha = 0.0;
+        this.threadsButton.sleep();
+
+        // bluesky
+        this.bskyButton = Button({
+            text: String.fromCharCode(0xe900),
+            fontSize: 16,
+            fontFamily: "icomoon",
+            fill: "#7575EF",
+            x: SCREEN_CENTER_X - (64 + 4) + 40,
+            y: SCREEN_CENTER_Y + (96 + 8),
+            cornerRadius: 8,
+            width: 32,
+            height: 32,
+        }).addChildTo(group3);
+        this.bskyButton.onclick = function () {
+            // https://docs.bsky.app/docs/advanced-guides/intent-links
+            let shareURL = "https://bsky.app/intent/compose?text=" + encodeURIComponent((postText + "\n" + postTags + "\n" + postURL).replace(/\n/g, "<br>"));
+            window.open(shareURL);
+        };
+        this.bskyButton.alpha = 0.0;
+        this.bskyButton.sleep();
+
+
         this.restartButton = Button({
             text: "RESTART",
             fontSize: 16,
@@ -324,21 +388,9 @@ phina.define("GameScene", {
             width: 72,
             height: 48,
         }).addChildTo(group3);
-
-        this.tweetButton.sleep();
         this.restartButton.sleep();
 
         var self = this;
-        this.tweetButton.onclick = function () {
-            var twitterURL = phina.social.Twitter.createURL({
-                type: "tweet",
-                text: "UDN スコア：" + self.nowScoreLabel.text + "\n",
-                hashtags: ["ネムレス", "NEMLESSS"],
-                url: "https://iwasaku.github.io/test5/UDN/",
-            });
-            window.open(twitterURL);
-        };
-
         this.restartButton.onpointstart = function () {
             self.exit();
         };
@@ -409,6 +461,8 @@ phina.define("GameScene", {
             if (++frame % FPS === 0) calcfoYdlyOfs();
 
         } else {
+            postText = "UDN\nスコア：" + this.nowScoreLabel.text;
+
             this.leftButton.sleep();
             this.rightButton.sleep();
 
@@ -417,10 +471,14 @@ phina.define("GameScene", {
                 this.buttonAlpha = 1.0;
             }
             this.gameOverLabel.alpha = this.buttonAlpha;
-            this.tweetButton.alpha = this.buttonAlpha;
+            this.xButton.alpha = this.buttonAlpha;
+            this.threadsButton.alpha = this.buttonAlpha;
+            this.bskyButton.alpha = this.buttonAlpha;
             this.restartButton.alpha = this.buttonAlpha;
             if (this.buttonAlpha > 0.7) {
-                this.tweetButton.wakeUp();
+                this.xButton.wakeUp();
+                this.threadsButton.wakeUp();
+                this.bskyButton.wakeUp();
                 this.restartButton.wakeUp();
             }
         }
